@@ -3,18 +3,72 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package telas;
+import java.sql.*;
+import conexao.ModuloConexao;
+import java.awt.Color;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Fdsan
  */
 public class TelaLogin extends javax.swing.JFrame {
-
+    Connection conexao = null;
+    PreparedStatement pst = null;
+    ResultSet rs = null;
+    
+    public void logar(){
+        String sql="select * from tbusuarios where loginusuario=? and senhausuario =?";
+        try {
+            //as linhas abaixo preparam a consulta ao banco em função do que foi digitado nas caixas de texto
+            //o ? é substituido pelo conteudo das variaveis
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, txtUsuario.getText());
+            String captura = new String(txtSenha.getPassword());
+            pst.setString(2, captura);
+            //a linha abaixo executa a query
+            rs = pst.executeQuery();
+            //se existir usuario e senha correspondente
+            if(rs.next()){
+                //a llinha a baixo obtem o conteudo do campo perfilda tabela tbfaetec
+                String perfil = rs.getString(4);
+               // System.out.println(perfil);
+               //a estrutura abaixo faz o tratamento do perfildo usuario
+               if(perfil.equals("admin")){
+                TelaPrincipal principal = new TelaPrincipal();
+                principal.setVisible(true);
+                TelaPrincipal.menAdmin.setEnabled(true);
+                TelaPrincipal.lblUsuario.setText(rs.getString(5));
+                TelaPrincipal.lblAcesso.setText(rs.getString(4));
+                TelaPrincipal.lblUsuario.setForeground(Color.red);
+                TelaPrincipal.lblAcesso.setForeground(Color.red);
+                this.dispose();
+               }else{
+                TelaPrincipal principal = new TelaPrincipal();
+                principal.setVisible(true);
+                TelaPrincipal.lblUsuario.setText(rs.getString(5));
+                TelaPrincipal.lblAcesso.setText(rs.getString(4));
+                this.dispose();
+            }
+            }else{
+                JOptionPane.showMessageDialog(null,"usuàrio e/ou senha Inválido(s)");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
     /**
      * Creates new form TelaLogin
      */
     public TelaLogin() {
         initComponents();
+        conexao = ModuloConexao.conector();
+        //System.out.println(conexao);
+        if (conexao != null){
+            lblStatus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/dbok.png")));
+        }else{
+            lblStatus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/dberro.png")));
+        }
     }
 
     /**
@@ -26,11 +80,12 @@ public class TelaLogin extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTextField1 = new javax.swing.JTextField();
-        jPasswordField1 = new javax.swing.JPasswordField();
+        txtUsuario = new javax.swing.JTextField();
+        txtSenha = new javax.swing.JPasswordField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        btnLogin = new javax.swing.JButton();
+        lblStatus = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
@@ -40,16 +95,16 @@ public class TelaLogin extends javax.swing.JFrame {
         setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jTextField1.setForeground(new java.awt.Color(0, 0, 0));
-        jTextField1.setCaretColor(new java.awt.Color(255, 255, 255));
-        getContentPane().add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 160, 180, 30));
+        txtUsuario.setForeground(new java.awt.Color(0, 0, 0));
+        txtUsuario.setCaretColor(new java.awt.Color(255, 255, 255));
+        getContentPane().add(txtUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 160, 180, 30));
 
-        jPasswordField1.setForeground(new java.awt.Color(0, 0, 0));
-        jPasswordField1.setCaretColor(new java.awt.Color(255, 255, 255));
-        jPasswordField1.setDisabledTextColor(new java.awt.Color(255, 255, 255));
-        jPasswordField1.setSelectedTextColor(new java.awt.Color(255, 255, 255));
-        jPasswordField1.setSelectionColor(new java.awt.Color(255, 255, 255));
-        getContentPane().add(jPasswordField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 220, 180, -1));
+        txtSenha.setForeground(new java.awt.Color(0, 0, 0));
+        txtSenha.setCaretColor(new java.awt.Color(255, 255, 255));
+        txtSenha.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        txtSenha.setSelectedTextColor(new java.awt.Color(255, 255, 255));
+        txtSenha.setSelectionColor(new java.awt.Color(255, 255, 255));
+        getContentPane().add(txtSenha, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 220, 180, -1));
 
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Login:");
@@ -59,10 +114,18 @@ public class TelaLogin extends javax.swing.JFrame {
         jLabel4.setText("Senha:");
         getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 200, -1, -1));
 
-        jButton1.setBackground(new java.awt.Color(0, 204, 0));
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Entrar");
-        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 260, 80, -1));
+        btnLogin.setBackground(new java.awt.Color(0, 204, 0));
+        btnLogin.setForeground(new java.awt.Color(255, 255, 255));
+        btnLogin.setText("Entrar");
+        btnLogin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLoginActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnLogin, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 260, 80, -1));
+
+        lblStatus.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/dberro.png"))); // NOI18N
+        getContentPane().add(lblStatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 290, 50, 50));
 
         jButton2.setBackground(new java.awt.Color(255, 0, 0));
         jButton2.setForeground(new java.awt.Color(255, 255, 255));
@@ -90,6 +153,12 @@ public class TelaLogin extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
+        // TODO add your handling code here:
+        //Chamando o metodo logar
+        logar();
+    }//GEN-LAST:event_btnLoginActionPerformed
 
     /**
      * @param args the command line arguments
@@ -127,13 +196,14 @@ public class TelaLogin extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnLogin;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JPasswordField jPasswordField1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JLabel lblStatus;
+    private javax.swing.JPasswordField txtSenha;
+    private javax.swing.JTextField txtUsuario;
     // End of variables declaration//GEN-END:variables
 }
