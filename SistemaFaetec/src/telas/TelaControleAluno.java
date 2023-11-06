@@ -76,15 +76,19 @@ public class TelaControleAluno extends javax.swing.JInternalFrame {
     //metodo para setar os campos do formulario com o conteudo da tabela
     public void setar_campos(){
         int setar = tblAluno.getSelectedRow();
+        txtIdAluno.setText(tblAluno.getModel().getValueAt(setar,0).toString());
         txtNomeAluno.setText(tblAluno.getModel().getValueAt(setar,1).toString());
-        txtRA.setText(tblAluno.getModel().getValueAt(setar,2).toString());
+        txtRA.setText(tblAluno.getModel().getValueAt(setar, 2).toString());
+        btnAdicionar.setEnabled(false);
     }
     private void alterar(){
-        String sql = "update tbalunos set nomealuno=?,ra=?";
+        String sql = "update tbalunos set nomealuno=?,ra=? where idaluno=?";
         try {
             pst = conexao.prepareStatement(sql);
             pst.setString(1, txtNomeAluno.getText());
             pst.setString(2, txtRA.getText());
+            pst.setString(3, txtIdAluno.getText());
+            
                         if ((txtNomeAluno.getText()).isEmpty() || (txtRA.getText().isEmpty())) {
                 JOptionPane.showMessageDialog(null, "Preencha todos os campos obrigatórios");
             } else {
@@ -95,13 +99,37 @@ public class TelaControleAluno extends javax.swing.JInternalFrame {
                 if (adicionado > 0) {
                     JOptionPane.showMessageDialog(null, "aluno alterado com sucesso");
                     
+                    txtIdAluno.setText(null);
                     txtNomeAluno.setText(null);
                     txtRA.setText(null);
+                    btnAdicionar.setEnabled(true);
                 }
 
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,e);
+        }
+    }
+    
+    private void remover() {
+        int confirma = JOptionPane.showConfirmDialog(null, "tem certeza que deseja remover esse aluno", "Atenção", JOptionPane.YES_NO_OPTION);
+        if (confirma == JOptionPane.YES_OPTION) {
+            String sql = "delete from tbalunos where idaluno=?";
+            try {
+                pst = conexao.prepareStatement(sql);
+                pst.setString(1, txtIdAluno.getText());
+                int apagado = pst.executeUpdate();
+                if (apagado > 0) {
+                    JOptionPane.showMessageDialog(null, "aluno removido com sucesso");
+                    txtIdAluno.setText(null);
+                    txtNomeAluno.setText(null);
+                    txtRA.setText(null); 
+                    btnAdicionar.setEnabled(true);
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+
         }
     }
 
@@ -117,12 +145,14 @@ public class TelaControleAluno extends javax.swing.JInternalFrame {
         jPanel3 = new javax.swing.JPanel();
         jPanel13 = new javax.swing.JPanel();
         btnEditar8 = new javax.swing.JButton();
-        btnAdicionar8 = new javax.swing.JButton();
+        btnAdicionar = new javax.swing.JButton();
         btnExcluir8 = new javax.swing.JButton();
         txtRA = new javax.swing.JTextField();
         txtNomeAluno = new javax.swing.JTextField();
         jLabel41 = new javax.swing.JLabel();
         jLabel42 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        txtIdAluno = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         jLabel44 = new javax.swing.JLabel();
         txtPesquisa = new javax.swing.JTextField();
@@ -144,22 +174,33 @@ public class TelaControleAluno extends javax.swing.JInternalFrame {
             }
         });
 
-        btnAdicionar8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/create.png"))); // NOI18N
-        btnAdicionar8.setContentAreaFilled(false);
-        btnAdicionar8.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnAdicionar8.addActionListener(new java.awt.event.ActionListener() {
+        btnAdicionar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/create.png"))); // NOI18N
+        btnAdicionar.setContentAreaFilled(false);
+        btnAdicionar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnAdicionar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAdicionar8ActionPerformed(evt);
+                btnAdicionarActionPerformed(evt);
             }
         });
 
         btnExcluir8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/delete.png"))); // NOI18N
         btnExcluir8.setContentAreaFilled(false);
         btnExcluir8.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnExcluir8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcluir8ActionPerformed(evt);
+            }
+        });
+
+        txtNomeAluno.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
 
         jLabel41.setText("*Nome:");
 
         jLabel42.setText("*RA:");
+
+        jLabel1.setText("ID:");
+
+        txtIdAluno.setEnabled(false);
 
         javax.swing.GroupLayout jPanel13Layout = new javax.swing.GroupLayout(jPanel13);
         jPanel13.setLayout(jPanel13Layout);
@@ -167,23 +208,28 @@ public class TelaControleAluno extends javax.swing.JInternalFrame {
             jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel13Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel13Layout.createSequentialGroup()
-                        .addGap(77, 77, 77)
+                        .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel42)
+                            .addComponent(jLabel41))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(jPanel13Layout.createSequentialGroup()
-                                    .addComponent(btnAdicionar8, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(btnExcluir8, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(txtNomeAluno, javax.swing.GroupLayout.PREFERRED_SIZE, 510, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(btnEditar8, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txtRA, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(jLabel42)
-                        .addComponent(jLabel41)))
-                .addContainerGap(148, Short.MAX_VALUE))
+                            .addComponent(txtRA, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel13Layout.createSequentialGroup()
+                                .addComponent(txtNomeAluno, javax.swing.GroupLayout.PREFERRED_SIZE, 421, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel1))))
+                    .addGroup(jPanel13Layout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addComponent(btnAdicionar, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(159, 159, 159)
+                        .addComponent(btnEditar8, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(160, 160, 160)
+                        .addComponent(btnExcluir8, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(txtIdAluno, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29))
         );
         jPanel13Layout.setVerticalGroup(
             jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -191,14 +237,16 @@ public class TelaControleAluno extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel41)
-                    .addComponent(txtNomeAluno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtNomeAluno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1)
+                    .addComponent(txtIdAluno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(6, 6, 6)
                 .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel42)
                     .addComponent(txtRA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
                 .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnAdicionar8, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAdicionar, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnEditar8)
                     .addComponent(btnExcluir8))
                 .addContainerGap())
@@ -244,7 +292,7 @@ public class TelaControleAluno extends javax.swing.JInternalFrame {
                 .addComponent(jLabel44)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(txtPesquisa))
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1042, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -264,9 +312,9 @@ public class TelaControleAluno extends javax.swing.JInternalFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap(139, Short.MAX_VALUE)
+                .addGap(207, 207, 207)
                 .addComponent(jPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(140, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -298,10 +346,10 @@ public class TelaControleAluno extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtPesquisaActionPerformed
 
-    private void btnAdicionar8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionar8ActionPerformed
+    private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed
         // Metodo para adicionar alunos
         adicionar();
-    }//GEN-LAST:event_btnAdicionar8ActionPerformed
+    }//GEN-LAST:event_btnAdicionarActionPerformed
 
     private void txtPesquisaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPesquisaKeyReleased
         // o evento abaixo e do tipo enquanto for digitando
@@ -319,11 +367,17 @@ public class TelaControleAluno extends javax.swing.JInternalFrame {
         alterar();
     }//GEN-LAST:event_btnEditar8ActionPerformed
 
+    private void btnExcluir8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluir8ActionPerformed
+        // TODO add your handling code here:
+        remover();
+    }//GEN-LAST:event_btnExcluir8ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAdicionar8;
+    private javax.swing.JButton btnAdicionar;
     private javax.swing.JButton btnEditar8;
     private javax.swing.JButton btnExcluir8;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel41;
     private javax.swing.JLabel jLabel42;
     private javax.swing.JLabel jLabel44;
@@ -332,6 +386,7 @@ public class TelaControleAluno extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable tblAluno;
+    private javax.swing.JTextField txtIdAluno;
     private javax.swing.JTextField txtNomeAluno;
     private javax.swing.JTextField txtPesquisa;
     private javax.swing.JTextField txtRA;
