@@ -96,12 +96,15 @@ public class TelaLogin extends javax.swing.JFrame {
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txtUsuario.setForeground(new java.awt.Color(0, 0, 0));
-        txtUsuario.setText("lauren");
         txtUsuario.setCaretColor(new java.awt.Color(255, 255, 255));
+        txtUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtUsuarioActionPerformed(evt);
+            }
+        });
         getContentPane().add(txtUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 160, 180, 30));
 
         txtSenha.setForeground(new java.awt.Color(0, 0, 0));
-        txtSenha.setText("thais");
         txtSenha.setCaretColor(new java.awt.Color(255, 255, 255));
         txtSenha.setDisabledTextColor(new java.awt.Color(255, 255, 255));
         txtSenha.setSelectedTextColor(new java.awt.Color(255, 255, 255));
@@ -170,6 +173,10 @@ public class TelaLogin extends javax.swing.JFrame {
     private void txtSenhaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSenhaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtSenhaActionPerformed
+
+    private void txtUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsuarioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtUsuarioActionPerformed
 
     /**
      * @param args the command line arguments
