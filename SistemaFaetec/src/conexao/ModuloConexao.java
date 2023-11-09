@@ -11,7 +11,7 @@ public class ModuloConexao {
         // a linha abaixo "chama" o drive
         String driver = "com.mysql.cj.jdbc.Driver";
         // armazenando informacoes referente ao banco
-        String url = "jdbc:mysql://localhost:3306/dbfenetec?zeroDateTimeBehavior=CONVERT_TO_NULL";
+        String url = "jdbc:mysql://192.168.105.175:3306/dbfenetec?zeroDateTimeBehavior=CONVERT_TO_NULL";
         String user = "root";
         String password = "root";
         // estabelecendo a conexao com o banco
